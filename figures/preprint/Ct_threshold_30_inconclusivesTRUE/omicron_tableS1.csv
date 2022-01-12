@@ -1,0 +1,49 @@
+TimeSinceFirstPos,DetectionSpeed,n_low,N,prop_low
+0,Frequent testing (≤1 days since last non-positive PCR); n=24,6,24,0.25
+1,Frequent testing (≤1 days since last non-positive PCR); n=24,10,20,0.5
+2,Frequent testing (≤1 days since last non-positive PCR); n=24,12,18,0.6666666666666666
+3,Frequent testing (≤1 days since last non-positive PCR); n=24,18,22,0.8181818181818182
+4,Frequent testing (≤1 days since last non-positive PCR); n=24,13,19,0.6842105263157895
+5,Frequent testing (≤1 days since last non-positive PCR); n=24,11,22,0.5
+6,Frequent testing (≤1 days since last non-positive PCR); n=24,5,21,0.23809523809523808
+7,Frequent testing (≤1 days since last non-positive PCR); n=24,3,20,0.15
+8,Frequent testing (≤1 days since last non-positive PCR); n=24,2,21,0.09523809523809523
+9,Frequent testing (≤1 days since last non-positive PCR); n=24,1,23,0.043478260869565216
+10,Frequent testing (≤1 days since last non-positive PCR); n=24,0,22,0
+11,Frequent testing (≤1 days since last non-positive PCR); n=24,0,19,0
+12,Frequent testing (≤1 days since last non-positive PCR); n=24,0,18,0
+13,Frequent testing (≤1 days since last non-positive PCR); n=24,0,19,0
+14,Frequent testing (≤1 days since last non-positive PCR); n=24,0,18,0
+15,Frequent testing (≤1 days since last non-positive PCR); n=24,0,18,0
+0,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",48,73,0.6575342465753424
+1,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",44,57,0.7719298245614035
+2,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",46,54,0.8518518518518519
+3,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",44,60,0.7333333333333333
+4,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",31,62,0.5
+5,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",26,66,0.3939393939393939
+6,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",22,65,0.3384615384615385
+7,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",15,66,0.22727272727272727
+8,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",13,67,0.19402985074626866
+9,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",6,64,0.09375
+10,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",2,61,0.03278688524590164
+11,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",1,53,0.018867924528301886
+12,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",1,50,0.02
+13,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",1,50,0.02
+14,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",0,48,0
+15,"Testing due to symptoms or contact 
+(≥2 days since last non-positive PCR); n=73",0,46,0

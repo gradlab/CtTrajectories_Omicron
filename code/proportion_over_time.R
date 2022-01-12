@@ -11,15 +11,18 @@ library(lubridate)
 library(patchwork)
 
 setwd("~/Documents/GitHub/Ct_Omicron")
-
+min_date <- as.Date("2021-07-05")
 low_ct_threshold <- 30
 inconclusive_sensitivity <- FALSE
 
 filename_base <- paste0("figures/preprint/Ct_threshold_",low_ct_threshold,"_inconclusives",inconclusive_sensitivity)
 if(!file.exists(filename_base)) dir.create(filename_base)
 
-#load("data/ct_dat_subset_figure1_INCONCLUSIVES.RData")
-load("data/ct_dat_subset_figure1.RData")
+if(inconclusive_sensitivity){
+    load("data/ct_dat_subset_figure1_using_inconclusives.RData")
+} else {
+    load("data/ct_dat_subset_figure1.RData")
+}
 
 dat <- dat %>% filter(TestResult != "No sample")
 
@@ -43,7 +46,6 @@ infection_histories <- dat %>% dplyr::select(PersonID, Lineage)  %>%
     nest(all_lineages=c(Lineage))  %>%
     group_by(PersonID)
 dat <- left_join(dat, infection_histories)
-dat <- dat %>% mutate(n_exposures = TotalInfections + NVaccinations)
 
 
 # Omicron -----------------------------------------------------------------
@@ -65,8 +67,8 @@ dat_omi <- dat_omi %>% group_by(PersonID, CumulativeInfectionNumber) %>%
 dat_omi_subset <- dat_omi %>% 
     ungroup() %>%
     left_join(dat_detections %>% dplyr::select(PersonID, DetectionSpeed,DaysSinceNegative)) %>% 
-    dplyr::select(PersonID, Diagnosis, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
-                  DaysSinceNegative, NVaccinations, Detected)%>%
+    dplyr::select(PersonID, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
+                  DaysSinceNegative, Detected)%>%
     distinct()
 
 ## Only look at positives between -5 days and 15 days between the first positive
@@ -75,7 +77,7 @@ dat_omi_subset <- dat_omi_subset %>% group_by(PersonID) %>% filter(TestResult ==
 dat_omi_subset <- dat_omi_subset %>% ungroup() %>% mutate(TimeSinceFirstPos=TestDate-MostRecentDetection)
 ## Only plot time points between 0 and 15 days post first positive
 dat_omi_subset_tmp <- dat_omi_subset %>% filter(TimeSinceFirstPos >= 0,TimeSinceFirstPos <= 15) %>% 
-filter(TestDate > as.numeric(as.Date("2021-11-01") - as.Date("2020-11-28")))
+filter(TestDate > as.numeric(as.Date("2021-11-01") - min_date))
 
 ## Sample sizes
 dat_omi_subset_tmp %>% dplyr::select(PersonID, DetectionSpeed) %>% distinct() %>% group_by(DetectionSpeed) %>% tally() 
@@ -147,8 +149,8 @@ dat_delta <- dat_delta %>% group_by(PersonID, CumulativeInfectionNumber) %>%
 ## Merge this indexing data subset and then get Ct values over the whole infection course
 dat_delta_subset <- dat_delta %>% 
     left_join(dat_detections %>% dplyr::select(PersonID, DetectionSpeed,DaysSinceNegative)) %>% 
-    dplyr::select(PersonID, Diagnosis, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
-                  DaysSinceNegative, NVaccinations, Detected) %>%
+    dplyr::select(PersonID, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
+                  DaysSinceNegative, Detected) %>%
     distinct()
 
 dat_delta_subset <- dat_delta_subset %>% mutate(DetectionSpeed = ifelse(is.na(DetectionSpeed),">=2 days",DetectionSpeed ))
