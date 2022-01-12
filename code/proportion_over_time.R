@@ -11,15 +11,18 @@ library(lubridate)
 library(patchwork)
 
 setwd("~/Documents/GitHub/Ct_Omicron")
-
+min_date <- as.Date("2021-07-05")
 low_ct_threshold <- 30
 inconclusive_sensitivity <- FALSE
 
 filename_base <- paste0("figures/preprint/Ct_threshold_",low_ct_threshold,"_inconclusives",inconclusive_sensitivity)
 if(!file.exists(filename_base)) dir.create(filename_base)
 
-#load("data/ct_dat_subset_figure1_INCONCLUSIVES.RData")
-load("data/ct_dat_subset_figure1.RData")
+if(inconclusive_sensitivity){
+    load("data/ct_dat_subset_figure1_using_inconclusives.RData")
+} else {
+    load("data/ct_dat_subset_figure1.RData")
+}
 
 dat <- dat %>% filter(TestResult != "No sample")
 
@@ -43,7 +46,6 @@ infection_histories <- dat %>% dplyr::select(PersonID, Lineage)  %>%
     nest(all_lineages=c(Lineage))  %>%
     group_by(PersonID)
 dat <- left_join(dat, infection_histories)
-dat <- dat %>% mutate(n_exposures = TotalInfections + NVaccinations)
 
 
 # Omicron -----------------------------------------------------------------
@@ -65,8 +67,8 @@ dat_omi <- dat_omi %>% group_by(PersonID, CumulativeInfectionNumber) %>%
 dat_omi_subset <- dat_omi %>% 
     ungroup() %>%
     left_join(dat_detections %>% dplyr::select(PersonID, DetectionSpeed,DaysSinceNegative)) %>% 
-    dplyr::select(PersonID, Diagnosis, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
-                  DaysSinceNegative, NVaccinations, Detected)%>%
+    dplyr::select(PersonID, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
+                  DaysSinceNegative, Detected)%>%
     distinct()
 
 ## Only look at positives between -5 days and 15 days between the first positive
@@ -75,7 +77,7 @@ dat_omi_subset <- dat_omi_subset %>% group_by(PersonID) %>% filter(TestResult ==
 dat_omi_subset <- dat_omi_subset %>% ungroup() %>% mutate(TimeSinceFirstPos=TestDate-MostRecentDetection)
 ## Only plot time points between 0 and 15 days post first positive
 dat_omi_subset_tmp <- dat_omi_subset %>% filter(TimeSinceFirstPos >= 0,TimeSinceFirstPos <= 15) %>% 
-filter(TestDate > as.numeric(as.Date("2021-11-01") - as.Date("2020-11-28")))
+filter(TestDate > as.numeric(as.Date("2021-11-01") - min_date))
 
 ## Sample sizes
 dat_omi_subset_tmp %>% dplyr::select(PersonID, DetectionSpeed) %>% distinct() %>% group_by(DetectionSpeed) %>% tally() 
@@ -147,8 +149,8 @@ dat_delta <- dat_delta %>% group_by(PersonID, CumulativeInfectionNumber) %>%
 ## Merge this indexing data subset and then get Ct values over the whole infection course
 dat_delta_subset <- dat_delta %>% 
     left_join(dat_detections %>% dplyr::select(PersonID, DetectionSpeed,DaysSinceNegative)) %>% 
-    dplyr::select(PersonID, Diagnosis, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
-                  DaysSinceNegative, NVaccinations, Detected) %>%
+    dplyr::select(PersonID, Lineage, TestDate, TestResult, CtT1, CtT2, MostRecentDetection, DetectionSpeed,
+                  DaysSinceNegative, Detected) %>%
     distinct()
 
 dat_delta_subset <- dat_delta_subset %>% mutate(DetectionSpeed = ifelse(is.na(DetectionSpeed),">=2 days",DetectionSpeed ))
@@ -160,6 +162,7 @@ dat_delta_subset <- dat_delta_subset %>% ungroup() %>% mutate(TimeSinceFirstPos=
 dat_delta_subset_tmp <- dat_delta_subset %>% filter(TimeSinceFirstPos >= 0,TimeSinceFirstPos <= 15) 
 
 ## Sample sizes
+## Note PersonID 429 only has one positive, so is filtered out around here
 dat_delta_subset_tmp %>% dplyr::select(PersonID, DetectionSpeed) %>% distinct() %>% group_by(DetectionSpeed) %>% tally()
 dat_delta_subset_tmp %>% distinct() %>% group_by(DetectionSpeed) %>% tally()
 
@@ -171,7 +174,7 @@ tmp_delta <- dat_delta_subset_tmp %>% group_by(TimeSinceFirstPos, DetectionSpeed
     summarize(n_low=sum(low_ct1,na.rm=TRUE),N=n()) %>%
     mutate(prop_low=n_low/N)
 
-delta_p1_key <- c("<=1 days"="Frequent testing (≤1 days since last non-positive PCR); n=7",
+delta_p1_key <- c("<=1 days"="Frequent testing (≤1 days since last non-positive PCR); n=6",
                     ">=2 days"="Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101")
 tmp_delta$DetectionSpeed <- delta_p1_key[tmp_delta$DetectionSpeed]
 dat_delta_subset_tmp$DetectionSpeed <- delta_p1_key[dat_delta_subset_tmp$DetectionSpeed]
@@ -201,7 +204,7 @@ p_detect_delta <- ggplot(tmp_delta) + geom_line(aes(x=TimeSinceFirstPos, y=prop_
     scale_y_continuous(limits=c(0,1)) +
     ylab(paste0("Proportion Ct<",low_ct_threshold)) + 
     xlab("Days since first positive") + 
-    scale_color_manual(name="Time since last non-positive PCR",values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + theme_minimal() + theme(plot.background = element_rect(fill="white",color=NA),legend.position=c(0.7,0.8)) + 
+    scale_color_manual(name="Time since last non-positive PCR",values=c("Frequent testing (≤1 days since last non-positive PCR); n=6"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + theme_minimal() + theme(plot.background = element_rect(fill="white",color=NA),legend.position=c(0.7,0.8)) + 
     geom_vline(xintercept=5) + scale_x_continuous(expand=c(0,0), limits=c(0,15), breaks=seq(0,15,by=1))
 
 p_detect_deltaN <- ggplot(tmp_delta) + 
@@ -210,7 +213,7 @@ p_detect_deltaN <- ggplot(tmp_delta) +
     ylab("N") + 
     xlab("Days since first positive") + 
     scale_y_continuous(breaks=seq(0,100,by=5)) +
-    scale_color_manual(name=NULL,values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + 
+    scale_color_manual(name=NULL,values=c("Frequent testing (≤1 days since last non-positive PCR); n=6"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + 
     scale_linetype_manual(name=NULL,values=c("Total"="solid","N Ct<30"="dashed"))+
     theme_minimal() + 
     theme(plot.background = element_rect(fill="white",color=NA),legend.position="bottom", legend.text=element_text(size=7)) + 
