@@ -174,7 +174,7 @@ tmp_delta <- dat_delta_subset_tmp %>% group_by(TimeSinceFirstPos, DetectionSpeed
     mutate(prop_low=n_low/N)
 
 delta_p1_key <- c("<=1 days"="Frequent testing (≤1 days since last non-positive PCR); n=7",
-                    ">=2 days"="Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101")
+                    ">=2 days"="Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=102")
 tmp_delta$DetectionSpeed <- delta_p1_key[tmp_delta$DetectionSpeed]
 dat_delta_subset_tmp$DetectionSpeed <- delta_p1_key[dat_delta_subset_tmp$DetectionSpeed]
 
@@ -203,7 +203,7 @@ p_detect_delta <- ggplot(tmp_delta) + geom_line(aes(x=TimeSinceFirstPos, y=prop_
     scale_y_continuous(limits=c(0,1)) +
     ylab(paste0("Proportion Ct<",low_ct_threshold)) + 
     xlab("Days since first positive") + 
-    scale_color_manual(name="Time since last non-positive PCR",values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + theme_minimal() + theme(plot.background = element_rect(fill="white",color=NA),legend.position=c(0.7,0.8)) + 
+    scale_color_manual(name="Time since last non-positive PCR",values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=102"="orange")) + theme_minimal() + theme(plot.background = element_rect(fill="white",color=NA),legend.position=c(0.7,0.8)) + 
     geom_vline(xintercept=5) + scale_x_continuous(expand=c(0,0), limits=c(0,15), breaks=seq(0,15,by=1))
 
 p_detect_deltaN <- ggplot(tmp_delta) + 
@@ -212,7 +212,7 @@ p_detect_deltaN <- ggplot(tmp_delta) +
     ylab("N") + 
     xlab("Days since first positive") + 
     scale_y_continuous(breaks=seq(0,100,by=5)) +
-    scale_color_manual(name=NULL,values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=101"="orange")) + 
+    scale_color_manual(name=NULL,values=c("Frequent testing (≤1 days since last non-positive PCR); n=7"="dark green","Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=102"="orange")) + 
     scale_linetype_manual(name=NULL,values=c("Total"="solid","N Ct<30"="dashed"))+
     theme_minimal() + 
     theme(plot.background = element_rect(fill="white",color=NA),legend.position="bottom", legend.text=element_text(size=7)) + 
