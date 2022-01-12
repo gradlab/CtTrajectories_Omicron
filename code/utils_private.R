@@ -1,0 +1,1 @@
+extdrive <- "/Volumes/SKExternal/Projects/Ct_Omicron/"
