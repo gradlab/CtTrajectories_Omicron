@@ -4,3 +4,6 @@ Stephen M. Kissler`*`, James Hay`*`, Joseph R. Fauver`*`, Christina Mack`*`, Car
 
 `*` denotes equal contribution
 
+__proportion_over_time.R__ generates the time course of RT-qPCR positivity depicted in Figure 1 (requires data/ct_dat_subset_figure1.RData).
+
+__run_analysis.R__ calls the remaining files to generate and save the MCMC viral trajectory fits depicted in Figure 2 (requires data/ct_dat_refined.RData).
