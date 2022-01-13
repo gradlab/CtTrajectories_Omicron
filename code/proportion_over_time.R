@@ -91,6 +91,24 @@ tmp <- dat_omi_subset_tmp %>% group_by(TimeSinceFirstPos, DetectionSpeed) %>%
     summarize(n_low=sum(low_ct1,na.rm=TRUE),N=n()) %>%
     mutate(prop_low=n_low/N)
 
+## Proportion with Ct < 30 on day 5 or later
+dat_omi_subset_tmp %>% mutate(AfterDay5 = TimeSinceFirstPos >= 5) %>% 
+    filter(AfterDay5 == TRUE) %>%
+    group_by(PersonID, DetectionSpeed) %>% 
+    summarize(AnyLowCtAfterDay5 = any(low_ct1)) %>%
+    select(PersonID, AnyLowCtAfterDay5, DetectionSpeed) %>%
+    group_by(DetectionSpeed) %>% 
+    summarize(NLowDay5Onward=sum(AnyLowCtAfterDay5,na.rm=TRUE),N=n()) %>%
+    mutate(PLowDay5Onward=NLowDay5Onward/N)
+
+## Proportion with Ct < 30 at any point
+dat_omi_subset_tmp %>% 
+    group_by(PersonID, DetectionSpeed) %>% 
+    summarize(AnyLowCt = any(low_ct1)) %>%
+    select(PersonID, AnyLowCt, DetectionSpeed) %>%
+    group_by(DetectionSpeed) %>% 
+    summarize(NLowCT=sum(AnyLowCt,na.rm=TRUE),N=n()) %>%
+    mutate(PLowAny=NLowCT/N)
 
 omicron_p1_key <- c("<=1 days"="Frequent testing (≤1 days since last non-positive PCR); n=27",
                     ">=2 days"="Testing due to symptoms or contact \n(≥2 days since last non-positive PCR); n=70")
