@@ -10,10 +10,10 @@ library(zoo)
 library(lubridate)
 library(patchwork)
 
-setwd("~/Documents/GitHub/Ct_Omicron")
+setwd("~/Documents/GitHub/CtTrajectories_Omicron/")
 min_date <- as.Date("2021-07-05")
 low_ct_threshold <- 30
-inconclusive_sensitivity <- FALSE
+inconclusive_sensitivity <- TRUE
 
 filename_base <- paste0("figures/preprint/Ct_threshold_",low_ct_threshold,"_inconclusives",inconclusive_sensitivity)
 if(!file.exists(filename_base)) dir.create(filename_base)
@@ -22,7 +22,10 @@ if(inconclusive_sensitivity){
     load("data/ct_dat_subset_figure1_using_inconclusives.RData")
 } else {
     load("data/ct_dat_subset_figure1.RData")
+    
 }
+
+
 
 dat <- dat %>% filter(TestResult != "No sample")
 
@@ -77,7 +80,10 @@ dat_omi_subset <- dat_omi_subset %>% group_by(PersonID) %>% filter(TestResult ==
 dat_omi_subset <- dat_omi_subset %>% ungroup() %>% mutate(TimeSinceFirstPos=TestDate-MostRecentDetection)
 ## Only plot time points between 0 and 15 days post first positive
 dat_omi_subset_tmp <- dat_omi_subset %>% filter(TimeSinceFirstPos >= 0,TimeSinceFirstPos <= 15) %>% 
-filter(TestDate > as.numeric(as.Date("2021-11-01") - min_date))
+    ## Replacing some date-based filters done in the local script version with manual filters to remove some individuals who shouldn't be plotted
+    ## These are just test results prior to start of November (shouldn't be any Omicron)
+   filter(!(PersonID ==226 & TestDate < 40), PersonID != 306)
+
 
 ## Sample sizes
 dat_omi_subset_tmp %>% dplyr::select(PersonID, DetectionSpeed) %>% distinct() %>% group_by(DetectionSpeed) %>% tally() 
